@@ -59,15 +59,17 @@ export default {
     return result;
   },
 
-  format(type, datetime = null) {
+  dateFormat(type, datetime) {
     let date_str;
-    let d = new Date();
+    let d;
     if (datetime) {
-      d = new Date(`${datetime}`);
+      d = new Date(datetime);
+    } else {
+      d = new Date();
     }
 
     const dt = d.toLocaleString("en-TH", {
-      hourCycle: "h23",
+      hour12: false,
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -83,6 +85,7 @@ export default {
     const month = dt.slice(0, 2);
     const date = dt.slice(3, 5);
     const time = `${dt.slice(11)}`.trim();
+    const miliSecond = `${d.getMilliseconds()}`.padStart(3, '0');
 
     switch (type) {
       case 'YY':
@@ -115,9 +118,6 @@ export default {
       case 'YYYYMMDD':
         date_str = `${year}${month}${date}`;
         break;
-      case 'YYYY.MM.DD':
-        date_str = `${year}.${month}.${date}`;
-        break;
       case 'YY-MM':
         date_str = `${year2}-${month}`;
         break;
@@ -142,9 +142,6 @@ export default {
       case 'DD/MM/YYYY TH':
         date_str = `${date}/${month}/${year_th}`;
         break;
-      case 'DD.MM.YYYY':
-        date_str = `${date}.${month}.${year}`;
-        break;
       case 'H':
         date_str = time.slice(0, 2);
         break;
@@ -163,6 +160,12 @@ export default {
       case 'YYYY-MM-DD H:i:s':
         date_str = `${year}-${month}-${date} ${time}`;
         break;
+      case 'YYYYMMDDHis':
+        date_str = `${year}${month}${date}${time.split(':').join('')}`
+        break;
+      case 'YYYYMMDDHism':
+        date_str = `${year}${month}${date}${time.split(':').join('')}${miliSecond}`
+        break;
       case 'DD/MM/YYYY H:i:s':
         date_str = `${date}/${month}/${year} ${time}`
         break;
@@ -170,7 +173,10 @@ export default {
         date_str = `${year_th}-${month}-${date} ${time}`;
         break;
       case 'DD/MM/YYYY H:i:s TH':
-        date_str = `${year_th}/${month}/${year} ${time}`
+        date_str = `${date}/${month}/${year} ${time}`
+        break;
+      case 'DDMMYYYYHis':
+        date_str = `${date}${month}${year}${time.split(':').join('')}`
         break;
     }
     return date_str;
